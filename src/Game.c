@@ -5,10 +5,10 @@
 #include "Controls.h"
 
 #define MAX_NPCS 11
-#define MAX_GND 9
+#define MAX_GND 7
 
 float textCounter = 0;
-float rot = 0;
+float rotation = 0;
 
 int catdir = 1;
 Vector2 MouseVector = { 0 };
@@ -19,13 +19,14 @@ player_t player = {
   (Rectangle){ 64, 491, 30, 30 },
 };
 
-Rectangle ground[MAX_GND] = {
-  { 50, 520, 30, 30 },
-  { 190, 590, 150, 30 },
-  { 450, 520, 30, 30 },
-  { 550, 520, 30, 30 },
-  { 650, 450, 200, 30 },
-  { 880, 351, 200, 20 }
+ground_t ground[MAX_GND] = {
+  { (Rectangle){ 50, 520, 30, 30 }, GRAY },
+  { (Rectangle){ 190, 590, 150, 30 }, GRAY },
+  { (Rectangle){ 450, 520, 30, 30 }, GRAY },
+  { (Rectangle){ 550, 520, 30, 30 }, GRAY },
+  { (Rectangle){ 650, 450, 200, 30 }, GRAY },
+  { (Rectangle){ 880, 351, 200, 20 }, GRAY },
+  { (Rectangle){ -400, 800, 330, 30 }, BLANK }
 };
 
 npc_t npc[MAX_NPCS] = {
@@ -53,8 +54,8 @@ bool IsNpcsActive(npc_t npc[])
 
 void InitGame(void)
 {
-  camera.target = (Vector2){ player.pos.x + 20.0f, player.pos.y + 20.0f };
   camera.offset = (Vector2){ GetScreenWidth()/2.0f, GetScreenHeight()/2.0f };
+  camera.target = (Vector2){ player.pos.x+15, player.pos.y+5 };
   camera.rotation = 0.0f;
   camera.zoom = 1.0f;
   player.friction = -9;
@@ -63,9 +64,9 @@ void InitGame(void)
 void UpdateGame(void)
 {
   MouseVector = GetScreenToWorld2D(GetMousePosition(), camera);
-
+  
   if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) printf("%f, %f\n", MouseVector.x, MouseVector.y );
-
+  
   UpdateHorizontalPhysics(&player);
   UpdateVerticalPhysics(&player, ground, MAX_GND);
 
@@ -91,19 +92,19 @@ void UpdateGame(void)
   if (IsKeyDown(KEY_EQUAL)) camera.zoom += GetFrameTime()/2;
   else if (IsKeyDown(KEY_MINUS)) camera.zoom -= GetFrameTime()/2;
 
-  if (IsKeyDown(KEY_I)) camera.target.y -= GetFrameTime()*500;
-  else if (IsKeyDown(KEY_K)) camera.target.y += GetFrameTime()*500;
+  if (IsKeyDown(KEY_I)) camera.target.y -= GetFrameTime()*250;
+  else if (IsKeyDown(KEY_K)) camera.target.y += GetFrameTime()*250;
 
-  if (IsKeyDown(KEY_J)) camera.target.x -= GetFrameTime()*500;
-  else if (IsKeyDown(KEY_L)) camera.target.x += GetFrameTime()*500;
+  if (IsKeyDown(KEY_J)) camera.target.x -= GetFrameTime()*250;
+  else if (IsKeyDown(KEY_L)) camera.target.x += GetFrameTime()*250;
 
   if (player.pos.y > 1000 || IsKeyPressed(KEY_R)) { player.pos.x = 64; player.pos.y = 491; player.velocity.y = 0; player.velocity.x = 0; }
 
   if (IsKeyPressed(KEY_D)) Debug = !Debug;
 
-  if (!player.canJump && catdir == 1) rot += GetFrameTime()*500;
-  else if (!player.canJump && catdir == -1) rot -= GetFrameTime()*500;
-  else rot = 0;
+  if (!player.canJump && catdir == 1) rotation += GetFrameTime()*500;
+  else if (!player.canJump && catdir == -1) rotation -= GetFrameTime()*500;
+  else rotation = 0;
 }
 
 void DrawGame(void)
@@ -119,20 +120,25 @@ void DrawGame(void)
                           DrawText("Welcome to Macaroon's Misadventure", -220, 380, 30, RED);
 
                           for (int i = 0; i < MAX_GND; ++i) {
-                            DrawRectangleRec(ground[i], GRAY);
+                            DrawRectangleRec(ground[i].pos, ground[i].color);
                           }
+
+                          DrawText("We ran out of blocks", ground[6].pos.x, ground[6].pos.y, 30, WHITE);
 
                           for (int i = 0; i < MAX_NPCS; ++i) {
                             DrawRectangleRec(npc[i].pos, GREEN);
                           }
 
-                          DrawTexturePro(cat, player.sourceRec, player.destRec, player.origin, rot*!player.canJump, RAYWHITE);
+                          DrawTexturePro(cat, player.sourceRec, player.destRec, player.origin, rotation*!player.canJump, RAYWHITE);
 
                           if (Debug) {
                             DrawRectangleLinesEx(player.pos, 1, RED);
                             DrawCircleLines(player.origin.x, player.origin.y, 10, PURPLE);
                             DrawRectangleLinesEx(player.sourceRec, 1, YELLOW);
                             DrawRectangleLinesEx(player.destRec, 1, BLUE);
+                            for (int i = 0; i < MAX_GND; ++i) {
+                                DrawRectangleLinesEx(ground[i].pos, 2, PINK);
+                            }
                           }
 
           EndMode2D();
