@@ -42,9 +42,8 @@ void InitGame(void);
 void UpdateGame(void);
 void DrawGame(void);
 void UpdateHorizontalPhysics(player_t *player);
-void UpdateVerticalPhysics(player_t *player, Rectangle ground[], int max);
-bool IsTouchingGnd(player_t *player, Rectangle ground[], int max);
-int  GetGnd(player_t *player, Rectangle ground[], int max);
+void UpdateVerticalPhysics(player_t *player, Rectangle *ground, int max);
+int  GetGnd(player_t *player, Rectangle *ground, int max);
 void UpdateGameCamera(Camera2D *camera, float delta, player_t *player, int width, int height);
 
 #endif

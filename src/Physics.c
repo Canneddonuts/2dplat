@@ -21,30 +21,21 @@ void UpdateHorizontalPhysics(player_t *player)
   player->pos.x += player->velocity.x * GetFrameTime() + (player->acceleration.x * .5) * (GetFrameTime() * GetFrameTime());
 }
 
-bool IsTouchingGnd(player_t *player, Rectangle ground[], int max)
+int GetGnd(player_t *player, Rectangle *ground, int max)
 {
   for (int i = 0; i < max; ++i) {
-    if (CheckCollisionRecs(player->pos, ground[i])) return true;
-  }
-
-  return false;
-}
-
-int GetGnd(player_t *player, Rectangle ground[], int max)
-{
-  for (int i = 0; i < max; ++i) {
-    if (CheckCollisionRecs(player->pos, ground[i])) return i;
+    if (CheckCollisionRecs(player->pos, *(ground + i))) return i;
   }
 
   return -1;
 }
 
-void UpdateVerticalPhysics(player_t *player, Rectangle ground[], int max)
+void UpdateVerticalPhysics(player_t *player, Rectangle *ground, int max)
 {
-  if (IsTouchingGnd(player, ground, max)) { player->canJump = true; player->is_jumping = false; }
+  if (GetGnd(player, ground, max) > -1) { player->canJump = true; player->is_jumping = false; }
   else player->canJump = false;
 
-  if (!IsTouchingGnd(player, ground, max)) player->velocity.y -= 1000.0f * GetFrameTime();
+  if (GetGnd(player, ground, max) == -1) player->velocity.y -= 1000.0f * GetFrameTime();
   else if (player->canJump && !player->is_jumping) {
     player->velocity.y = 0;
     player->pos.y = ground[GetGnd(player, ground, max)].y - 29;
