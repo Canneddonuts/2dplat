@@ -32,14 +32,14 @@ typedef struct
   bool is_jumping;
 } player_t;
 
-typedef struct 
+typedef struct
 {
   Rectangle pos;
   char *msg;
   bool talkin;
 } npc_t;
 
-typedef struct 
+typedef struct
 {
   Rectangle pos;
   Color color;
@@ -52,5 +52,6 @@ void UpdateHorizontalPhysics(player_t *player);
 void UpdateVerticalPhysics(player_t *player, ground_t *ground, int max);
 int  TouchingGroundElement(player_t *player, ground_t *ground, int max);
 void UpdateGameCamera(Camera2D *camera, float delta, player_t *player, int width, int height);
+void UpdateUserCamera(Camera2D *camera);
 
 #endif

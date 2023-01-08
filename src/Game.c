@@ -14,6 +14,8 @@ int catdir = 1;
 Vector2 MouseVector = { 0 };
 
 bool Debug = false;
+bool CameraEnabled = true;
+bool DimedBackground = false;
 
 player_t player = {
   (Rectangle){ 64, 491, 30, 30 },
@@ -64,9 +66,9 @@ void InitGame(void)
 void UpdateGame(void)
 {
   MouseVector = GetScreenToWorld2D(GetMousePosition(), camera);
-  
+
   if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) printf("%f, %f\n", MouseVector.x, MouseVector.y );
-  
+
   UpdateHorizontalPhysics(&player);
   UpdateVerticalPhysics(&player, ground, MAX_GND);
 
@@ -87,20 +89,15 @@ void UpdateGame(void)
     else textCounter += GetFrameTime() * 10;
   } else textCounter = 0;
 
-  if (!Debug) UpdateGameCamera(&camera, GetFrameTime(), &player, GetScreenWidth(), GetScreenHeight());
+  if (IsKeyPressed(KEY_D)) Debug = !Debug;
+  if (IsKeyPressed(KEY_C)) CameraEnabled = !CameraEnabled;
+  if (IsKeyPressed(KEY_G)) DimedBackground = !DimedBackground;
 
-  if (IsKeyDown(KEY_EQUAL)) camera.zoom += GetFrameTime()/2;
-  else if (IsKeyDown(KEY_MINUS)) camera.zoom -= GetFrameTime()/2;
+  if (CameraEnabled) UpdateGameCamera(&camera, GetFrameTime(), &player, GetScreenWidth(), GetScreenHeight());
 
-  if (IsKeyDown(KEY_I)) camera.target.y -= GetFrameTime()*250;
-  else if (IsKeyDown(KEY_K)) camera.target.y += GetFrameTime()*250;
-
-  if (IsKeyDown(KEY_J)) camera.target.x -= GetFrameTime()*250;
-  else if (IsKeyDown(KEY_L)) camera.target.x += GetFrameTime()*250;
+  UpdateUserCamera(&camera);
 
   if (player.pos.y > 1000 || IsKeyPressed(KEY_R)) { player.pos.x = 64; player.pos.y = 491; player.velocity.y = 0; player.velocity.x = 0; }
-
-  if (IsKeyPressed(KEY_D)) Debug = !Debug;
 
   if (!player.canJump && catdir == 1) rotation += GetFrameTime()*500;
   else if (!player.canJump && catdir == -1) rotation -= GetFrameTime()*500;
@@ -113,7 +110,8 @@ void DrawGame(void)
 
           ClearBackground(RAYWHITE);
 
-          DrawTexture(bg, -20, -20, RAYWHITE);
+          if (DimedBackground) DrawTexture(bg, -20, -20, GRAY);
+          else DrawTexture(bg, -20, -20, RAYWHITE);
 
           BeginMode2D(camera);
 

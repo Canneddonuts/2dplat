@@ -19,3 +19,15 @@ void UpdateGameCamera(Camera2D *camera, float delta, player_t *player, int width
         camera->target = Vector2Add(camera->target, Vector2Scale(diff, speed*delta/length));
     }
 }
+
+void UpdateUserCamera(Camera2D *camera)
+{
+  if (IsKeyDown(KEY_EQUAL)) camera->zoom += GetFrameTime()/2;
+  else if (IsKeyDown(KEY_MINUS)) camera->zoom -= GetFrameTime()/2;
+
+  if (IsKeyDown(KEY_I)) camera->target.y -= GetFrameTime()*250;
+  else if (IsKeyDown(KEY_K)) camera->target.y += GetFrameTime()*250;
+
+  if (IsKeyDown(KEY_J)) camera->target.x -= GetFrameTime()*250;
+  else if (IsKeyDown(KEY_L)) camera->target.x += GetFrameTime()*250;
+}
