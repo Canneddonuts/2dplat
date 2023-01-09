@@ -4,7 +4,7 @@
 #include "Game.h"
 #include "Controls.h"
 
-#define MAX_NPCS 11
+#define MAX_NPCS 10
 #define MAX_GND 7
 
 float textCounter = 0;
@@ -41,8 +41,7 @@ npc_t npc[MAX_NPCS] = {
   { (Rectangle){ 820, 430, 20, 20 }, "God those two are insufferable!!", false },
   { (Rectangle){ 900, 311, 40, 40 }, "I am bigger therefore superior.", false },
   { (Rectangle){ 1000, 331, 20, 20 }, "The meaning of life is-wait one sec. Oh yeah 'If you can see this I f---ed up.'", false },
-  { (Rectangle){ 1060, 331, 20, 20 }, "Use 'IKJL' for camera movement ig.", false },
-  { (Rectangle){ -600, 530, 20, 20 }, "I HATE PEOPLE >:(", false }
+  { (Rectangle){ 1060, 331, 20, 20 }, "Use 'IKJL' for camera movement ig.", false }
 };
 
 bool IsNpcsActive(npc_t npc[])
