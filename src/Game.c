@@ -68,8 +68,7 @@ void UpdateGame(void)
 
   if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) printf("%f, %f\n", MouseVector.x, MouseVector.y );
 
-  UpdateHorizontalPhysics(&player);
-  UpdateVerticalPhysics(&player, ground, MAX_GND);
+  UpdatePlayerPhysics(&player, ground, MAX_GND);
 
   player.sourceRec = (Rectangle){ 0, 0, cat.width*catdir, cat.height };
   player.destRec = (Rectangle){ player.pos.x+10, player.pos.y+15, cat.width, cat.height };
@@ -115,6 +114,8 @@ void DrawGame(void)
           BeginMode2D(camera);
 
                           DrawText("Welcome to Macaroon's Misadventure", -220, 380, 30, RED);
+
+
 
                           for (int i = 0; i < MAX_GND; ++i) {
                             DrawRectangleRec(ground[i].pos, ground[i].color);

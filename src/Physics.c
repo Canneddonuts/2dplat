@@ -4,7 +4,16 @@
 #include "Game.h"
 #include "Controls.h"
 
-void UpdateHorizontalPhysics(player_t *player)
+int TouchingGroundElement(player_t *player, ground_t *ground, int max)
+{
+  for (int i = 0; i < max; ++i) {
+    if (CheckCollisionRecs(player->pos, (ground + i)->pos)) return i;
+  }
+
+  return -1;
+}
+
+void UpdatePlayerPhysics(player_t *player, ground_t *ground, int max)
 {
   player->acceleration.x = 0;
 
@@ -19,19 +28,7 @@ void UpdateHorizontalPhysics(player_t *player)
   if (fabsf(player->velocity.x) < 1) player->velocity.x = 0;
 
   player->pos.x += player->velocity.x * GetFrameTime() + (player->acceleration.x * .5) * (GetFrameTime() * GetFrameTime());
-}
 
-int TouchingGroundElement(player_t *player, ground_t *ground, int max)
-{
-  for (int i = 0; i < max; ++i) {
-    if (CheckCollisionRecs(player->pos, (ground + i)->pos)) return i;
-  }
-
-  return -1;
-}
-
-void UpdateVerticalPhysics(player_t *player, ground_t *ground, int max)
-{
   if (TouchingGroundElement(player, ground, max) > -1) { player->canJump = true; player->is_jumping = false; }
   else player->canJump = false;
 

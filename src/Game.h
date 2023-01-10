@@ -48,8 +48,7 @@ typedef struct
 void InitGame(void);
 void UpdateGame(void);
 void DrawGame(void);
-void UpdateHorizontalPhysics(player_t *player);
-void UpdateVerticalPhysics(player_t *player, ground_t *ground, int max);
+void UpdatePlayerPhysics(player_t *player, ground_t *ground, int max);
 int  TouchingGroundElement(player_t *player, ground_t *ground, int max);
 void UpdateGameCamera(Camera2D *camera, float delta, player_t *player, int width, int height);
 void UpdateUserCamera(Camera2D *camera);
