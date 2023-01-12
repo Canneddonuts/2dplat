@@ -1,11 +1,12 @@
 #include "../include/raylib.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "Game.h"
 #include "Controls.h"
 
 #define MAX_NPCS 10
-#define MAX_GND 7
+size_t GroundAmount = 7;
 
 float textCounter = 0;
 float rotation = 0;
@@ -16,20 +17,13 @@ Vector2 MouseVector = { 0 };
 bool Debug = false;
 bool CameraEnabled = true;
 bool DimedBackground = false;
+bool PlaceMode = false;
 
 player_t player = {
   (Rectangle){ 64, 491, 30, 30 },
 };
 
-ground_t ground[MAX_GND] = {
-  { (Rectangle){ 50, 520, 30, 30 }, GRAY },
-  { (Rectangle){ 190, 590, 150, 30 }, GRAY },
-  { (Rectangle){ 450, 520, 30, 30 }, GRAY },
-  { (Rectangle){ 550, 520, 30, 30 }, GRAY },
-  { (Rectangle){ 650, 450, 200, 30 }, GRAY },
-  { (Rectangle){ 880, 351, 200, 20 }, GRAY },
-  { (Rectangle){ -400, 800, 330, 30 }, BLANK }
-};
+ground_t *ground;
 
 npc_t npc[MAX_NPCS] = {
   { (Rectangle){ 200, 570, 20, 20 }, "My friend loves Nietzsche.", false },
@@ -60,15 +54,35 @@ void InitGame(void)
   camera.rotation = 0.0f;
   camera.zoom = 1.0f;
   player.friction = -9;
+
+  // Allocate space in RAM for the blocks
+  ground = malloc(GroundAmount * sizeof(*ground));
+
+  ground[0] = (ground_t){ (Rectangle){ 50, 520, 30, 30 }, GRAY };
+  ground[1] = (ground_t){ (Rectangle){ 190, 590, 150, 30 }, GRAY };
+  ground[2] = (ground_t){ (Rectangle){ 450, 520, 30, 30 }, GRAY };
+  ground[3] = (ground_t){ (Rectangle){ 550, 520, 30, 30 }, GRAY };
+  ground[4] = (ground_t){ (Rectangle){ 650, 450, 200, 30 }, GRAY };
+  ground[5] = (ground_t){ (Rectangle){ 880, 351, 200, 20 }, GRAY };
+  ground[6] = (ground_t){ (Rectangle){ -400, 800, 330, 30 }, BLANK };
 }
 
 void UpdateGame(void)
 {
   MouseVector = GetScreenToWorld2D(GetMousePosition(), camera);
 
-  if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) printf("%f, %f\n", MouseVector.x, MouseVector.y );
+  // add new blocks with realloc
+  if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && PlaceMode) {
+    GroundAmount++;
 
-  UpdatePlayerPhysics(&player, ground, MAX_GND);
+    ground = (ground_t*)realloc(ground, GroundAmount * sizeof(*ground));
+
+    ground[GroundAmount-1] = (ground_t){ (Rectangle){ MouseVector.x, MouseVector.y, 30, 30, }, RED };
+
+    printf("INFO: GAME: ground[%zu] dynamicly spawned at pos %f, %f\n", GroundAmount, MouseVector.x, MouseVector.y );
+  }
+
+  UpdatePlayerPhysics(&player, ground, GroundAmount);
 
   player.sourceRec = (Rectangle){ 0, 0, cat.width*catdir, cat.height };
   player.destRec = (Rectangle){ player.pos.x+10, player.pos.y+15, cat.width, cat.height };
@@ -90,6 +104,7 @@ void UpdateGame(void)
   if (IsKeyPressed(KEY_D)) Debug = !Debug;
   if (IsKeyPressed(KEY_C)) CameraEnabled = !CameraEnabled;
   if (IsKeyPressed(KEY_G)) DimedBackground = !DimedBackground;
+  if (IsKeyPressed(KEY_P)) PlaceMode = !PlaceMode;
 
   if (CameraEnabled) UpdateGameCamera(&camera, GetFrameTime(), &player, GetScreenWidth(), GetScreenHeight());
 
@@ -117,7 +132,7 @@ void DrawGame(void)
 
 
 
-                          for (int i = 0; i < MAX_GND; ++i) {
+                          for (int i = 0; i < GroundAmount; ++i) {
                             DrawRectangleRec(ground[i].pos, ground[i].color);
                           }
 
@@ -134,7 +149,7 @@ void DrawGame(void)
                             DrawCircleLines(player.origin.x, player.origin.y, 10, PURPLE);
                             DrawRectangleLinesEx(player.sourceRec, 1, YELLOW);
                             DrawRectangleLinesEx(player.destRec, 1, BLUE);
-                            for (int i = 0; i < MAX_GND; ++i) {
+                            for (int i = 0; i < GroundAmount; ++i) {
                                 DrawRectangleLinesEx(ground[i].pos, 2, PINK);
                             }
                           }
@@ -151,6 +166,7 @@ void DrawGame(void)
               DrawText(TextFormat("Y POS: %f", player.pos.y), GetScreenWidth()/2 - 150, 180, 20, WHITE);
               DrawText(TextFormat("Y ACCELERATION: %f", player.acceleration.y), GetScreenWidth()/2 - 150, 200, 20, WHITE);
               DrawText(TextFormat("TEXTCOUNTER: , %f", textCounter), GetScreenWidth()/2 - 150, 220, 20, WHITE);
+              DrawText(TextFormat("PLACE MODE: , %d", PlaceMode), GetScreenWidth()/2 - 150, 240, 20, WHITE);
           }
 
           for (int i = 0; i < MAX_NPCS; ++i) {
@@ -163,4 +179,10 @@ void DrawGame(void)
 
 
   EndDrawing();
+}
+
+void DestroyGame(void)
+{
+  // Free all our allocated memory
+  free(ground);
 }
