@@ -30,6 +30,7 @@ typedef struct
   float friction;
   bool canJump;
   bool is_jumping;
+  bool is_walking;
 } player_t;
 
 typedef struct
@@ -43,6 +44,7 @@ typedef struct
 {
   Rectangle pos;
   Color color;
+  int type;
 } ground_t;
 
 void InitGame(void);
