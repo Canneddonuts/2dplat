@@ -2,6 +2,7 @@
 #include "raylib/raymath.h"
 
 #include "Game.h"
+#include "Macros.h"
 #include "Controls.h"
 
 int TouchingGroundElement(player_t *player, ground_t *ground, int max)
@@ -24,7 +25,7 @@ void UpdatePlayerPhysics(player_t *player, ground_t *ground, int max)
 
   player->velocity.x += player->acceleration.x * GetFrameTime();
 
-  player->velocity.x = max(-700, min(player->velocity.x, 700));
+  player->velocity.x = clamp(-700, player->velocity.x, 700);
   if (fabsf(player->velocity.x) < 1) player->velocity.x = 0;
 
   player->pos.x += player->velocity.x * GetFrameTime() + (player->acceleration.x * .5) * (GetFrameTime() * GetFrameTime());
