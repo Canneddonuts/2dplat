@@ -387,7 +387,7 @@ PROJECT_SOURCE_PATH = src
 PROJECT_SOURCE_FILES ?= \
     $(PROJECT_SOURCE_PATH)/Main.c \
     $(PROJECT_SOURCE_PATH)/Game.c \
-    $(PROJECT_SOURCE_PATH)/Physics.c \
+    $(PROJECT_SOURCE_PATH)/Player.c \
     $(PROJECT_SOURCE_PATH)/Camera.c
 
 # Define all object files from source files

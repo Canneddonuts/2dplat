@@ -7,24 +7,22 @@
 #include "Controls.h"
 
 #define MAX_NPCS 10
-size_t GroundAmount = 7;
+static size_t GroundAmount = 7;
 
-float textCounter = 0;
-float rotation = 0;
+static float textCounter = 0;
 
-int catdir = 1;
-int NextGroundType = 0;
-Vector2 MouseVector = { 0 };
+static int NextGroundType = 0;
+static Vector2 MouseVector = { 0 };
 
-bool DebugInfo = false;
-bool CameraEnabled = true;
-bool DimedBackground = false;
-bool PlaceMode = false;
-bool HitboxLines = false;
+static bool DebugInfo = false;
+static bool CameraEnabled = true;
+static bool DimedBackground = false;
+static bool PlaceMode = false;
+static bool HitboxLines = false;
 
-player_t player;
-ground_t *ground;
-npc_t npc[MAX_NPCS];  
+static player_t player;
+static ground_t *ground;
+static npc_t npc[MAX_NPCS];
 
 bool IsNpcsActive(npc_t npc[])
 {
@@ -37,7 +35,9 @@ bool IsNpcsActive(npc_t npc[])
 
 void InitGame(void)
 {
-  player = (player_t){ (Rectangle){ 64, 491, 30, 30 } };
+  player.pos = (Rectangle){ 64, 491, 30, 30 };
+  player.rotation = 0;
+  player.dir = 1;
   player.friction = -9;
 
   camera.offset = (Vector2){ GetScreenWidth()/2.0f, GetScreenHeight()/2.0f };
@@ -55,7 +55,7 @@ void InitGame(void)
   ground[4] = (ground_t){ (Rectangle){ 650, 450, 200, 30 }, GRAY, 0 };
   ground[5] = (ground_t){ (Rectangle){ 880, 351, 200, 20 }, GRAY, 0 };
   ground[6] = (ground_t){ (Rectangle){ -400, 800, 330, 30 }, BLANK, 0 };
-  
+
   npc[0] = (npc_t) { (Rectangle){ 200, 570, 20, 20 }, "My friend loves Nietzsche.", false };
   npc[1] = (npc_t) { (Rectangle){ 300, 570, 20, 20 }, "God is dead and we killed him frfr ong.", false };
   npc[2] = (npc_t) { (Rectangle){ 450, 500, 20, 20 }, "HiSegmentation fault (core dumped)", false };
@@ -77,12 +77,12 @@ void UpdateGame(void)
     GroundAmount++;
 
     ground = (ground_t*)realloc(ground, GroundAmount * sizeof(*ground));
-     
+
     ground[GroundAmount-1] = (ground_t){ (Rectangle){ MouseVector.x, MouseVector.y, 30, 30, }, BLANK, NextGroundType };
 
     switch (NextGroundType) {
-	case 0: ground[GroundAmount-1].color = RED; break;
-	case 1: ground[GroundAmount-1].color = BLUE; break;
+	     case 0: ground[GroundAmount-1].color = RED; break;
+	     case 1: ground[GroundAmount-1].color = BLUE; break;
     }
 
     printf("INFO: GAME: ground[%zu] dynamicly spawned at pos %f, %f\n", GroundAmount, MouseVector.x, MouseVector.y );
@@ -90,18 +90,13 @@ void UpdateGame(void)
 
   for (int i = 0; i < GroundAmount; ++i) {
      if (ground[i].type == 1) ground[i].pos.y +=  sin(GetTime()*2) * GetFrameTime()*60;
-  } 
+  }
 
   UpdatePlayerPhysics(&player, ground, GroundAmount);
-
-  player.sourceRec = (Rectangle){ 0, 0, cat.width*catdir, cat.height };
-  player.destRec = (Rectangle){ player.pos.x+10, player.pos.y+15, cat.width, cat.height };
-  player.origin = (Vector2){ player.destRec.width/2, player.destRec.height/2 };
-
-  player.is_walking = (INPUT_RIGHT_DOWN) || (INPUT_LEFT_DOWN);
-
-  if ((INPUT_RIGHT_DOWN) && !(INPUT_LEFT_DOWN)) catdir = 1;
-  if ((INPUT_LEFT_DOWN) && !(INPUT_RIGHT_DOWN)) catdir = -1;
+  UpdatePlayerSpritePos(&player);
+  UpdatePlayerDir(&player);
+  if (IsPlayerOffScreen(&player, 1000) || IsKeyPressed(KEY_R)) ResetPlayer(&player);
+  UpdatePlayerAnimation(&player);
 
   for (int i = 0; i < MAX_NPCS; ++i) {
     if (CheckCollisionRecs(player.pos, npc[i].pos)) { npc[i].talkin = true; }
@@ -124,13 +119,6 @@ void UpdateGame(void)
   if (CameraEnabled) UpdateGameCamera(&camera, GetFrameTime(), &player, GetScreenWidth(), GetScreenHeight());
 
   UpdateUserCamera(&camera);
-
-  if (player.pos.y > 1000 || IsKeyPressed(KEY_R)) { player.pos.x = 64; player.pos.y = 491; player.velocity.y = 0; player.velocity.x = 0; }
-
-  if (!player.canJump && catdir == 1) rotation += GetFrameTime()*500;
-  else if (!player.canJump && catdir == -1) rotation -= GetFrameTime()*500;
-  else if (player.is_walking) rotation = 10*sin(GetTime()*10);
-  else rotation = 0;
 }
 
 void DrawGame(void)
@@ -144,8 +132,8 @@ void DrawGame(void)
 
           BeginMode2D(camera);
 
-                          DrawText("Welcome to Macaroon's Misadventure", -220, 380, 30, Fade(RED,fabsf(sin(GetTime()))));
-                         
+                          DrawText("Welcome to Macaroon's Misadventure", -220, 380, 30, Fade(RED,fabs(sin(GetTime()))));
+
                           for (int i = 0; i < GroundAmount; ++i) {
                             DrawRectangleRec(ground[i].pos, ground[i].color);
                           }
@@ -156,7 +144,7 @@ void DrawGame(void)
                             DrawRectangleRec(npc[i].pos, GREEN);
                           }
 
-                          DrawTexturePro(cat, player.sourceRec, player.destRec, player.origin, rotation, RAYWHITE);
+                          DrawTexturePro(cat, player.sourceRec, player.destRec, player.origin, player.rotation, RAYWHITE);
 
                           if (HitboxLines) {
                             DrawRectangleLinesEx(player.pos, 1, RED);
@@ -173,7 +161,7 @@ void DrawGame(void)
 
           DrawFPS(0, 0);
           if (DebugInfo) {
-              DrawRectangle(GetScreenWidth()/2 - 160, 80, 320, 250, Fade(BLACK, 0.3));    
+              DrawRectangle(GetScreenWidth()/2 - 160, 80, 320, 250, Fade(BLACK, 0.3));
               DrawText("--DEBUG--", GetScreenWidth()/2 - 80, 80, 20, GREEN);
               DrawText(TextFormat("X VELOCITY: %f", player.velocity.x), GetScreenWidth()/2 - 150, 100, 20, WHITE);
               DrawText(TextFormat("X POS: %f", player.pos.x), GetScreenWidth()/2 - 150, 120, 20, WHITE);

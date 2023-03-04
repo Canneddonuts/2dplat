@@ -14,6 +14,48 @@ int TouchingGroundElement(player_t *player, ground_t *ground, int max)
   return -1;
 }
 
+int IsPlayerOffScreen(player_t *player, float DeathPosY)
+{
+  return (player->pos.y > DeathPosY);
+}
+
+void ResetPlayer(player_t *player)
+{
+  player->pos.x = 64;
+  player->pos.y = 491;
+
+  player->velocity = (Vector2) { 0, 0 };
+}
+
+void UpdatePlayerSpritePos(player_t *player)
+{
+  player->sourceRec = (Rectangle) { 0, 0, cat.width*player->dir, cat.height };
+
+  player->destRec = (Rectangle) { player->pos.x+10, player->pos.y+15, cat.width, cat.height };
+
+  player->origin = (Vector2) { player->destRec.width/2, player->destRec.height/2 };
+}
+
+void UpdatePlayerDir(player_t *player)
+{
+  if ((INPUT_RIGHT_DOWN) && !(INPUT_LEFT_DOWN)) player->dir = 1;
+  if ((INPUT_LEFT_DOWN) && !(INPUT_RIGHT_DOWN)) player->dir = -1;
+}
+
+void UpdatePlayerAnimation(player_t *player)
+{
+  player->is_walking = (INPUT_RIGHT_DOWN) || (INPUT_LEFT_DOWN);
+
+  if (!player->canJump && player->dir == 1)
+    player->rotation += GetFrameTime()*500;
+  else if (!player->canJump && player->dir == -1)
+    player->rotation -= GetFrameTime()*500;
+  else if (player->is_walking)
+    player->rotation = 10*sin(GetTime()*10);
+  else
+    player->rotation = 0;
+}
+
 void UpdatePlayerPhysics(player_t *player, ground_t *ground, int max)
 {
   player->acceleration.x = 0;

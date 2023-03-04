@@ -14,6 +14,8 @@ typedef struct
   Vector2 velocity;
   Vector2 acceleration;
   float friction;
+  int rotation;
+  int dir;
   bool canJump;
   bool is_jumping;
   bool is_walking;
@@ -22,7 +24,7 @@ typedef struct
 typedef struct
 {
   Rectangle pos;
-  char *msg;
+  const char *msg;
   bool talkin;
 } npc_t;
 
@@ -39,6 +41,11 @@ void DrawGame(void);
 void DestroyGame(void);
 void UpdatePlayerPhysics(player_t *player, ground_t *ground, int max);
 int  TouchingGroundElement(player_t *player, ground_t *ground, int max);
+int  IsPlayerOffScreen(player_t *player, float DeathPosY);
+void UpdatePlayerAnimation(player_t *player);
+void UpdatePlayerSpritePos(player_t *player);
+void UpdatePlayerDir(player_t *player);
+void ResetPlayer(player_t *player);
 void UpdateGameCamera(Camera2D *camera, float delta, player_t *player, int width, int height);
 void UpdateUserCamera(Camera2D *camera);
 
