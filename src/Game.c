@@ -35,26 +35,14 @@ bool IsNpcsActive(npc_t npc[])
 
 void InitGame(void)
 {
-  player.pos = (Rectangle){ 64, 491, 30, 30 };
-  player.rotation = 0;
-  player.dir = 1;
-  player.friction = -9;
+  InitPlayer(&player);
 
   camera.offset = (Vector2){ GetScreenWidth()/2.0f, GetScreenHeight()/2.0f };
   camera.target = (Vector2){ player.pos.x+15, player.pos.y+5 };
   camera.rotation = 0.0f;
   camera.zoom = 1.0f;
 
-  // Allocate space in RAM for the blocks
-  ground = malloc(GroundAmount * sizeof(*ground));
-
-  ground[0] = (ground_t){ (Rectangle){ 50, 520, 30, 30 }, GRAY, 0 };
-  ground[1] = (ground_t){ (Rectangle){ 190, 590, 150, 30 }, GRAY, 0 };
-  ground[2] = (ground_t){ (Rectangle){ 450, 520, 30, 30 }, GRAY, 0 };
-  ground[3] = (ground_t){ (Rectangle){ 550, 520, 30, 30 }, GRAY, 0 };
-  ground[4] = (ground_t){ (Rectangle){ 650, 450, 200, 30 }, GRAY, 0 };
-  ground[5] = (ground_t){ (Rectangle){ 880, 351, 200, 20 }, GRAY, 0 };
-  ground[6] = (ground_t){ (Rectangle){ -400, 800, 330, 30 }, BLANK, 0 };
+  InitGround(&ground, GroundAmount);
 
   npc[0] = (npc_t) { (Rectangle){ 200, 570, 20, 20 }, "My friend loves Nietzsche.", false };
   npc[1] = (npc_t) { (Rectangle){ 300, 570, 20, 20 }, "God is dead and we killed him frfr ong.", false };
@@ -72,18 +60,16 @@ void UpdateGame(void)
 {
   MouseVector = GetScreenToWorld2D(GetMousePosition(), camera);
 
-  // add new blocks with realloc
+  if (IsKeyPressed(KEY_D)) DebugInfo = !DebugInfo;
+  if (IsKeyPressed(KEY_H)) HitboxLines = !HitboxLines;
+  if (IsKeyPressed(KEY_C)) CameraEnabled = !CameraEnabled;
+  if (IsKeyPressed(KEY_G)) DimedBackground = !DimedBackground;
+  if (IsKeyPressed(KEY_P)) PlaceMode = !PlaceMode;
+  if (IsKeyPressed(KEY_ZERO)) NextGroundType = 0;
+  if (IsKeyPressed(KEY_ONE)) NextGroundType = 1;
+
   if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && PlaceMode) {
-    GroundAmount++;
-
-    ground = (ground_t*)realloc(ground, GroundAmount * sizeof(*ground));
-
-    ground[GroundAmount-1] = (ground_t){ (Rectangle){ MouseVector.x, MouseVector.y, 30, 30, }, BLANK, NextGroundType };
-
-    switch (NextGroundType) {
-	     case 0: ground[GroundAmount-1].color = RED; break;
-	     case 1: ground[GroundAmount-1].color = BLUE; break;
-    }
+    AddGroundBlock(&ground, &GroundAmount, NextGroundType, MouseVector);
 
     printf("INFO: GAME: ground[%zu] dynamicly spawned at pos %f, %f\n", GroundAmount, MouseVector.x, MouseVector.y );
   }
@@ -107,14 +93,6 @@ void UpdateGame(void)
     if ((INPUT_TALK_DOWN)) textCounter += GetFrameTime() * 30;
     else textCounter += GetFrameTime() * 10;
   } else textCounter = 0;
-
-  if (IsKeyPressed(KEY_D)) DebugInfo = !DebugInfo;
-  if (IsKeyPressed(KEY_H)) HitboxLines = !HitboxLines;
-  if (IsKeyPressed(KEY_C)) CameraEnabled = !CameraEnabled;
-  if (IsKeyPressed(KEY_G)) DimedBackground = !DimedBackground;
-  if (IsKeyPressed(KEY_P)) PlaceMode = !PlaceMode;
-  if (IsKeyPressed(KEY_ZERO)) NextGroundType = 0;
-  if (IsKeyPressed(KEY_ONE)) NextGroundType = 1;
 
   if (CameraEnabled) UpdateGameCamera(&camera, GetFrameTime(), &player, GetScreenWidth(), GetScreenHeight());
 

@@ -5,13 +5,15 @@
 #include "Macros.h"
 #include "Controls.h"
 
-int TouchingGroundElement(player_t *player, ground_t *ground, int max)
+void InitPlayer(player_t *player)
 {
-  for (int i = 0; i < max; ++i) {
-    if (CheckCollisionRecs(player->pos, (ground + i)->pos)) return i;
-  }
+  player->pos = (Rectangle) { 64, 491, 30, 30 };
 
-  return -1;
+  player->rotation = 0;
+
+  player->dir = 1;
+  
+  player->friction = -9;
 }
 
 int IsPlayerOffScreen(player_t *player, float DeathPosY)

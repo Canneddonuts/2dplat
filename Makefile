@@ -388,7 +388,8 @@ PROJECT_SOURCE_FILES ?= \
     $(PROJECT_SOURCE_PATH)/Main.c \
     $(PROJECT_SOURCE_PATH)/Game.c \
     $(PROJECT_SOURCE_PATH)/Player.c \
-    $(PROJECT_SOURCE_PATH)/Camera.c
+		$(PROJECT_SOURCE_PATH)/Camera.c \
+		$(PROJECT_SOURCE_PATH)/Ground.c
 
 # Define all object files from source files
 OBJS = $(patsubst %.c, %.o, $(PROJECT_SOURCE_FILES))
