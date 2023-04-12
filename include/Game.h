@@ -7,7 +7,7 @@ extern Texture2D bg;
 extern Camera2D camera;
 extern Texture2D cat;
 
-typedef struct
+typedef struct 
 {
   Rectangle pos;
   Rectangle sourceRec;
@@ -53,5 +53,6 @@ void UpdateGameCamera(Camera2D *camera, float delta, player_t *player, int width
 void UpdateUserCamera(Camera2D *camera);
 void InitGround(ground_t **ground, int n);
 void AddGroundBlock(ground_t **ground, size_t *n, int GroundType, Vector2 pos);
+void UpdateGroundMovement(ground_t *ground, int n);
 
 #endif

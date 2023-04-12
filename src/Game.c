@@ -74,9 +74,7 @@ void UpdateGame(void)
     printf("INFO: GAME: ground[%zu] dynamicly spawned at pos %f, %f\n", GroundAmount, MouseVector.x, MouseVector.y );
   }
 
-  for (int i = 0; i < GroundAmount; ++i) {
-     if (ground[i].type == 1) ground[i].pos.y +=  sin(GetTime()*2) * GetFrameTime()*60;
-  }
+  UpdateGroundMovement(ground, GroundAmount);
 
   UpdatePlayerPhysics(&player, ground, GroundAmount);
   UpdatePlayerSpritePos(&player);

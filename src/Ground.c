@@ -1,4 +1,5 @@
 #include "raylib/raylib.h"
+#include "raylib/raymath.h"
 #include <stdlib.h>
 
 #include "Game.h"
@@ -16,15 +17,6 @@ void InitGround(ground_t **ground, int n)
   (*ground)[6] = (ground_t) { (Rectangle){ -400, 800, 330, 30 }, BLANK, 0 };
 }
 
-int TouchingGroundElement(player_t *player, ground_t *ground, int max)
-{
-  for (int i = 0; i < max; ++i) {
-    if (CheckCollisionRecs(player->pos, (ground + i)->pos)) return i;
-  }
-
-  return -1;
-}
-
 void AddGroundBlock(ground_t **ground, size_t *n, int GroundType, Vector2 pos)
 {
   *n += 1;
@@ -40,5 +32,21 @@ void AddGroundBlock(ground_t **ground, size_t *n, int GroundType, Vector2 pos)
   switch (GroundType) {
 	  case 0: (*ground)[*n-1].color = RED; break;
 	  case 1: (*ground)[*n-1].color = BLUE; break;
+  }
+}
+
+int TouchingGroundElement(player_t *player, ground_t *ground, int max)
+{
+  for (int i = 0; i < max; ++i) {
+    if (CheckCollisionRecs(player->pos, (ground + i)->pos)) return i;
+  }
+
+  return -1;
+}
+
+void UpdateGroundMovement(ground_t *ground, int n)
+{
+  for (int i = 0; i < n; ++i) {
+    if (ground[i].type == 1) ground[i].pos.y +=  sin(GetTime()*2) * GetFrameTime()*40;
   }
 }
