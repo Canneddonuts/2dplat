@@ -38,7 +38,10 @@ void AddGroundBlock(ground_t **ground, size_t *n, int GroundType, Vector2 pos)
 int TouchingGroundElement(player_t *player, ground_t *ground, int max)
 {
   for (int i = 0; i < max; ++i) {
-    if (CheckCollisionRecs(player->pos, (ground + i)->pos)) return i;
+    if (CheckCollisionRecs(player->pos, (ground + i)->pos)) { 
+        player->hbcolor = YELLOW;  
+        return i;
+    } else player->hbcolor = RED;
   }
 
   return -1;

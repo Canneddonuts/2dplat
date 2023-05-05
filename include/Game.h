@@ -21,6 +21,7 @@ typedef struct
   bool canJump;
   bool is_jumping;
   bool is_walking;
+  Color hbcolor;
 } player_t;
 
 typedef struct
@@ -47,6 +48,7 @@ int  IsPlayerOffScreen(player_t *player, float DeathPosY);
 void InitPlayer(player_t *player);
 void UpdatePlayerAnimation(player_t *player);
 void UpdatePlayerSpritePos(player_t *player);
+void UpdateDebugPlayerMovement(player_t *player, ground_t *ground, int max);
 void UpdatePlayerDir(player_t *player);
 void ResetPlayer(player_t *player);
 void UpdateGameCamera(Camera2D *camera, float delta, player_t *player, int width, int height);

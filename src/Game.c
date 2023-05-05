@@ -19,6 +19,7 @@ static bool CameraEnabled = true;
 static bool DimedBackground = false;
 static bool PlaceMode = false;
 static bool HitboxLines = false;
+static bool DebugPhysics = false;
 
 static player_t player;
 static ground_t *ground;
@@ -65,8 +66,10 @@ void UpdateGame(void)
   if (IsKeyPressed(KEY_C)) CameraEnabled = !CameraEnabled;
   if (IsKeyPressed(KEY_G)) DimedBackground = !DimedBackground;
   if (IsKeyPressed(KEY_P)) PlaceMode = !PlaceMode;
+  if (IsKeyPressed(KEY_Q)) DebugPhysics = !DebugPhysics;
   if (IsKeyPressed(KEY_ZERO)) NextGroundType = 0;
   if (IsKeyPressed(KEY_ONE)) NextGroundType = 1;
+
 
   if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && PlaceMode) {
     AddGroundBlock(&ground, &GroundAmount, NextGroundType, MouseVector);
@@ -76,7 +79,8 @@ void UpdateGame(void)
 
   UpdateGroundMovement(ground, GroundAmount);
 
-  UpdatePlayerPhysics(&player, ground, GroundAmount);
+  if (!DebugPhysics) UpdatePlayerPhysics(&player, ground, GroundAmount);
+  else UpdateDebugPlayerMovement(&player, ground, GroundAmount);
   UpdatePlayerSpritePos(&player);
   UpdatePlayerDir(&player);
   if (IsPlayerOffScreen(&player, 1000) || IsKeyPressed(KEY_R)) ResetPlayer(&player);
@@ -123,7 +127,7 @@ void DrawGame(void)
                           DrawTexturePro(cat, player.sourceRec, player.destRec, player.origin, player.rotation, RAYWHITE);
 
                           if (HitboxLines) {
-                            DrawRectangleLinesEx(player.pos, 1, RED);
+                            DrawRectangleLinesEx(player.pos, 1, player.hbcolor);
                             DrawCircleLines(player.origin.x, player.origin.y, 10, PURPLE);
                             DrawRectangleLinesEx(player.sourceRec, 1, YELLOW);
                             DrawRectangleLinesEx(player.destRec, 1, BLUE);

@@ -12,8 +12,10 @@ void InitPlayer(player_t *player)
   player->rotation = 0;
 
   player->dir = 1;
-  
+
   player->friction = -9;
+
+  player->hbcolor = RED;
 }
 
 int IsPlayerOffScreen(player_t *player, float DeathPosY)
@@ -31,11 +33,11 @@ void ResetPlayer(player_t *player)
 
 void UpdatePlayerSpritePos(player_t *player)
 {
+  player->origin = (Vector2) { cat.width/2, cat.height/2 };
+
   player->sourceRec = (Rectangle) { 0, 0, cat.width*player->dir, cat.height };
 
   player->destRec = (Rectangle) { player->pos.x+10, player->pos.y+15, cat.width, cat.height };
-
-  player->origin = (Vector2) { player->destRec.width/2, player->destRec.height/2 };
 }
 
 void UpdatePlayerDir(player_t *player)
@@ -88,4 +90,16 @@ void UpdatePlayerPhysics(player_t *player, ground_t *ground, int max)
   }
 
   player->pos.y -= player->velocity.y * GetFrameTime();
+}
+
+void UpdateDebugPlayerMovement(player_t *player, ground_t *ground, int max)
+{
+  if ((INPUT_LEFT_DOWN)) player->pos.x -= 300 * GetFrameTime();
+  if ((INPUT_UP_DOWN)) player->pos.y -= 300 * GetFrameTime();
+  if ((INPUT_RIGHT_DOWN)) player->pos.x += 300 * GetFrameTime();
+  if ((INPUT_DOWN_DOWN)) player->pos.y += 300 * GetFrameTime();
+  if (IsKeyDown(KEY_B)) player->velocity.y += 500.0f * GetFrameTime();
+  if (IsKeyDown(KEY_V)) player->velocity.y -= 500.0f * GetFrameTime();
+
+  TouchingGroundElement(player, ground, max);
 }
