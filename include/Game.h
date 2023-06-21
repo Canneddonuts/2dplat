@@ -7,7 +7,7 @@ extern Texture2D bg;
 extern Camera2D camera;
 extern Texture2D cat;
 
-typedef struct 
+typedef struct Player
 {
   Rectangle pos;
   Rectangle sourceRec;
@@ -22,16 +22,17 @@ typedef struct
   bool is_jumping;
   bool is_walking;
   Color hbcolor;
+  Color scolor;
 } player_t;
 
-typedef struct
+typedef struct Npc
 {
   Rectangle pos;
   const char *msg;
   bool talkin;
 } npc_t;
 
-typedef struct
+typedef struct Ground
 {
   Rectangle pos;
   Color color;
@@ -43,7 +44,7 @@ void UpdateGame(void);
 void DrawGame(void);
 void DestroyGame(void);
 void UpdatePlayerPhysics(player_t *player, ground_t *ground, int max);
-int  TouchingGroundElement(player_t *player, ground_t *ground, int max);
+int  TouchingGroundElement(player_t *player, ground_t *ground, int n);
 int  IsPlayerOffScreen(player_t *player, float DeathPosY);
 void InitPlayer(player_t *player);
 void UpdatePlayerAnimation(player_t *player);
@@ -54,6 +55,7 @@ void ResetPlayer(player_t *player);
 void UpdateGameCamera(Camera2D *camera, float delta, player_t *player, int width, int height);
 void UpdateUserCamera(Camera2D *camera);
 void InitGround(ground_t **ground, int n);
+void DeleteGroundBlock(ground_t **ground, size_t *n);
 void AddGroundBlock(ground_t **ground, size_t *n, int GroundType, Vector2 pos);
 void UpdateGroundMovement(ground_t *ground, int n);
 

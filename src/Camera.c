@@ -23,7 +23,7 @@ void UpdateGameCamera(Camera2D *camera, float delta, player_t *player, int width
 void UpdateUserCamera(Camera2D *camera)
 {
   if (IsKeyDown(KEY_EQUAL)) camera->zoom += GetFrameTime()/2;
-  else if (IsKeyDown(KEY_MINUS)) camera->zoom -= GetFrameTime()/2;
+  else if (IsKeyDown(KEY_MINUS) && camera->zoom > 0) camera->zoom -= GetFrameTime()/2;
 
   if (IsKeyDown(KEY_I)) camera->target.y -= GetFrameTime()*250;
   else if (IsKeyDown(KEY_K)) camera->target.y += GetFrameTime()*250;

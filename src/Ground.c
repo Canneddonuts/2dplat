@@ -23,7 +23,9 @@ void AddGroundBlock(ground_t **ground, size_t *n, int GroundType, Vector2 pos)
 
   ground_t *ngp = realloc(*ground, *n * sizeof(ground_t));
 
-  if (ngp != NULL) *ground = ngp;
+  if (ngp == NULL) return;
+  
+  *ground = ngp;
 
   ngp = NULL;
 
@@ -35,9 +37,22 @@ void AddGroundBlock(ground_t **ground, size_t *n, int GroundType, Vector2 pos)
   }
 }
 
-int TouchingGroundElement(player_t *player, ground_t *ground, int max)
+void DeleteGroundBlock(ground_t **ground, size_t *n)
 {
-  for (int i = 0; i < max; ++i) {
+  if (*n < 8) return;    
+
+  *n -= 1;
+    
+  ground_t *ngp = realloc(*ground, *n * sizeof(ground_t));
+    
+  *ground = ngp;
+
+  ngp = NULL;
+}
+
+int TouchingGroundElement(player_t *player, ground_t *ground, int n)
+{
+  for (int i = 0; i < n; ++i) {
     if (CheckCollisionRecs(player->pos, (ground + i)->pos)) { 
         player->hbcolor = YELLOW;  
         return i;

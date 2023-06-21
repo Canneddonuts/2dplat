@@ -70,11 +70,18 @@ void UpdateGame(void)
   if (IsKeyPressed(KEY_ZERO)) NextGroundType = 0;
   if (IsKeyPressed(KEY_ONE)) NextGroundType = 1;
 
+  if (PlaceMode) {
+    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+      AddGroundBlock(&ground, &GroundAmount, NextGroundType, MouseVector);
 
-  if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && PlaceMode) {
-    AddGroundBlock(&ground, &GroundAmount, NextGroundType, MouseVector);
+      printf("INFO: GAME: ground[%zu] dynamicly spawned at pos %f, %f\n", GroundAmount, MouseVector.x, MouseVector.y );
+    }
 
-    printf("INFO: GAME: ground[%zu] dynamicly spawned at pos %f, %f\n", GroundAmount, MouseVector.x, MouseVector.y );
+    if (IsKeyPressed(KEY_BACKSPACE) && GroundAmount > 7) {
+      printf("INFO: GAME: ground[%zu] deleted\n", GroundAmount);
+
+      DeleteGroundBlock(&ground, &GroundAmount);
+    }
   }
 
   UpdateGroundMovement(ground, GroundAmount);
@@ -124,7 +131,7 @@ void DrawGame(void)
                             DrawRectangleRec(npc[i].pos, GREEN);
                           }
 
-                          DrawTexturePro(cat, player.sourceRec, player.destRec, player.origin, player.rotation, RAYWHITE);
+                          DrawTexturePro(cat, player.sourceRec, player.destRec, player.origin, player.rotation, player.scolor);
 
                           if (HitboxLines) {
                             DrawRectangleLinesEx(player.pos, 1, player.hbcolor);
@@ -152,6 +159,7 @@ void DrawGame(void)
               DrawText(TextFormat("TEXTCOUNTER: , %f", textCounter), GetScreenWidth()/2 - 150, 220, 20, WHITE);
               DrawText(TextFormat("PLACE MODE: , %d", PlaceMode), GetScreenWidth()/2 - 150, 240, 20, WHITE);
               DrawText(TextFormat("sin(GetTime()*2): , %f", sin(GetTime()*2)), GetScreenWidth()/2 - 150, 260, 20, WHITE);
+              DrawText(TextFormat("GROUNDAMOUNT: , %zu", GroundAmount), GetScreenWidth()/2 - 150, 280, 20, WHITE);
           }
 
           for (int i = 0; i < MAX_NPCS; ++i) {

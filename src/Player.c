@@ -16,6 +16,8 @@ void InitPlayer(player_t *player)
   player->friction = -9;
 
   player->hbcolor = RED;
+
+  player->scolor = RAYWHITE;
 }
 
 int IsPlayerOffScreen(player_t *player, float DeathPosY)
