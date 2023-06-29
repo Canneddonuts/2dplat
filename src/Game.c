@@ -71,23 +71,19 @@ void UpdateGame(void)
   if (IsKeyPressed(KEY_ONE)) NextGroundType = 1;
 
   if (PlaceMode) {
-    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
       AddGroundBlock(&ground, &GroundAmount, NextGroundType, MouseVector);
 
-      printf("INFO: GAME: ground[%zu] dynamicly spawned at pos %f, %f\n", GroundAmount, MouseVector.x, MouseVector.y );
-    }
-
-    if (IsKeyPressed(KEY_BACKSPACE) && GroundAmount > 7) {
-      printf("INFO: GAME: ground[%zu] deleted\n", GroundAmount);
-
+    if (IsKeyPressed(KEY_BACKSPACE) && GroundAmount > 7)
       DeleteGroundBlock(&ground, &GroundAmount);
-    }
   }
 
   UpdateGroundMovement(ground, GroundAmount);
 
-  if (!DebugPhysics) UpdatePlayerPhysics(&player, ground, GroundAmount);
-  else UpdateDebugPlayerMovement(&player, ground, GroundAmount);
+  if (!DebugPhysics)
+    UpdatePlayerPhysics(&player, ground, GroundAmount);
+  else
+    UpdateDebugPlayerMovement(&player, ground, GroundAmount);
   UpdatePlayerSpritePos(&player);
   UpdatePlayerDir(&player);
   if (IsPlayerOffScreen(&player, 1000) || IsKeyPressed(KEY_R)) ResetPlayer(&player);
@@ -178,4 +174,6 @@ void DestroyGame(void)
 {
   // Free all our allocated memory
   free(ground);
+  UnloadTexture(bg);
+  UnloadTexture(cat);
 }

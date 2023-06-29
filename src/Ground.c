@@ -1,5 +1,6 @@
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
+#include <stdio.h>
 #include <stdlib.h>
 
 #include "Game.h"
@@ -24,7 +25,7 @@ void AddGroundBlock(ground_t **ground, size_t *n, int GroundType, Vector2 pos)
   ground_t *ngp = realloc(*ground, *n * sizeof(ground_t));
 
   if (ngp == NULL) return;
-  
+
   *ground = ngp;
 
   ngp = NULL;
@@ -35,16 +36,20 @@ void AddGroundBlock(ground_t **ground, size_t *n, int GroundType, Vector2 pos)
 	  case 0: (*ground)[*n-1].color = RED; break;
 	  case 1: (*ground)[*n-1].color = BLUE; break;
   }
+
+  printf("INFO: GAME: ground[%zu] dynamicly spawned at pos %f, %f\n", *n, pos.x, pos.y );
 }
 
 void DeleteGroundBlock(ground_t **ground, size_t *n)
 {
-  if (*n < 8) return;    
+  if (*n < 8) return;
+
+  printf("INFO: GAME: ground[%zu] deleted\n", *n);
 
   *n -= 1;
-    
+
   ground_t *ngp = realloc(*ground, *n * sizeof(ground_t));
-    
+
   *ground = ngp;
 
   ngp = NULL;
@@ -53,8 +58,8 @@ void DeleteGroundBlock(ground_t **ground, size_t *n)
 int TouchingGroundElement(player_t *player, ground_t *ground, int n)
 {
   for (int i = 0; i < n; ++i) {
-    if (CheckCollisionRecs(player->pos, (ground + i)->pos)) { 
-        player->hbcolor = YELLOW;  
+    if (CheckCollisionRecs(player->pos, (ground + i)->pos)) {
+        player->hbcolor = YELLOW;
         return i;
     } else player->hbcolor = RED;
   }

@@ -22,7 +22,6 @@ int main(void)
   SetConfigFlags(FLAG_VSYNC_HINT | FLAG_WINDOW_RESIZABLE);
 
   InitWindow(640, 480, "Platformer Story");
-
   InitGame();
 
   bg = LoadTexture("assets/gfx/bg.png");
@@ -36,9 +35,7 @@ int main(void)
       while (!WindowShouldClose()) UpdateDrawFrame();
   #endif
 
-  UnloadTexture(bg);
-  UnloadTexture(cat);
-
+  DestroyGame();
   CloseWindow();
 
   return 0;
