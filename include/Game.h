@@ -1,11 +1,10 @@
 #ifndef GAME_HEADER
 #define GAME_HEADER
 
-#include <stddef.h>
-
 extern Texture2D BackgroundSprite;
 extern Texture2D PlayerSprite;
 extern Camera2D camera;
+extern Vector2 MouseVector;
 
 typedef struct Player
 {
@@ -34,9 +33,9 @@ typedef struct Npc
 
 typedef struct Ground
 {
-  Rectangle pos;
-  Color color;
   int type;
+  Color color;
+  Rectangle pos;
 } ground_t;
 
 void InitGame(void);
@@ -44,11 +43,5 @@ void UpdateGame(void);
 void DrawGame(void);
 void DestroyGame(void);
 int  TouchingGroundElement(player_t *player, ground_t *ground, int n);
-void UpdateGameCamera(Camera2D *camera, float delta, player_t *player, int width, int height);
-void UpdateUserCamera(Camera2D *camera);
-void InitGround(ground_t **ground, int n);
-void DeleteGroundBlock(ground_t **ground, size_t *n);
-void AddGroundBlock(ground_t **ground, size_t *n, int GroundType, Vector2 pos);
-void UpdateGroundMovement(ground_t *ground, int n);
 
 #endif

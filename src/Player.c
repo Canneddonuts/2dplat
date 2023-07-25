@@ -139,10 +139,12 @@ static void UpdatePlayerPhysics(player_t *player, ground_t *ground, int max)
       player->velocity.y += 430.0f;
   }
 
-  player->pos.y -= player->velocity.y * GetFrameTime();
-  player->pos.x += player->velocity.x * GetFrameTime() + (player->acceleration.x * .5) * (GetFrameTime() * GetFrameTime());
+  player->velocity.y = max(-800, player->velocity.y);
 
   player->acceleration.x = 0;
+
+  player->pos.y -= player->velocity.y * GetFrameTime();
+  player->pos.x += player->velocity.x * GetFrameTime() + (player->acceleration.x * .5) * (GetFrameTime() * GetFrameTime());
 }
 
 static void UpdateDebugPlayerMovement(player_t *player, ground_t *ground, int max)
