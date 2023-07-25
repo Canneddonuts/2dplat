@@ -3,26 +3,26 @@
 
 #include <stddef.h>
 
-extern Texture2D bg;
+extern Texture2D BackgroundSprite;
+extern Texture2D PlayerSprite;
 extern Camera2D camera;
-extern Texture2D cat;
 
 typedef struct Player
 {
-  Rectangle pos;
-  Rectangle sourceRec;
-  Rectangle destRec;
-  Vector2 origin;
-  Vector2 velocity;
-  Vector2 acceleration;
-  float friction;
-  int rotation;
-  int dir;
   bool canJump;
   bool is_jumping;
   bool is_walking;
+  int dir;
+  int rotation;
+  float friction;
+  Vector2 origin;
+  Vector2 velocity;
+  Vector2 acceleration;
   Color hbcolor;
   Color scolor;
+  Rectangle pos;
+  Rectangle sourceRec;
+  Rectangle destRec;
 } player_t;
 
 typedef struct Npc
@@ -43,15 +43,7 @@ void InitGame(void);
 void UpdateGame(void);
 void DrawGame(void);
 void DestroyGame(void);
-void UpdatePlayerPhysics(player_t *player, ground_t *ground, int max);
 int  TouchingGroundElement(player_t *player, ground_t *ground, int n);
-int  IsPlayerOffScreen(player_t *player, float DeathPosY);
-void InitPlayer(player_t *player);
-void UpdatePlayerAnimation(player_t *player);
-void UpdatePlayerSpritePos(player_t *player);
-void UpdateDebugPlayerMovement(player_t *player, ground_t *ground, int max);
-void UpdatePlayerDir(player_t *player);
-void ResetPlayer(player_t *player);
 void UpdateGameCamera(Camera2D *camera, float delta, player_t *player, int width, int height);
 void UpdateUserCamera(Camera2D *camera);
 void InitGround(ground_t **ground, int n);

@@ -1,10 +1,9 @@
 #include "raylib/raylib.h"
-#include "raylib/raymath.h"
 
 #include "Game.h"
 
-Texture2D bg;
-Texture2D cat;
+Texture2D BackgroundSprite;
+Texture2D PlayerSprite;
 Camera2D camera;
 
 #if defined(PLATFORM_WEB)
@@ -19,13 +18,14 @@ void UpdateDrawFrame(void)
 
 int main(void)
 {
-  SetConfigFlags(FLAG_VSYNC_HINT | FLAG_WINDOW_RESIZABLE);
+  SetConfigFlags(FLAG_VSYNC_HINT);
 
   InitWindow(640, 480, "Platformer Story");
-  InitGame();
 
-  bg = LoadTexture("assets/gfx/bg.png");
-  cat = LoadTexture("assets/gfx/cat.png");
+  BackgroundSprite = LoadTexture("assets/gfx/bg.png");
+  PlayerSprite = LoadTexture("assets/gfx/cat.png");
+
+  InitGame();
 
   #if defined(PLATFORM_WEB)
       emscripten_set_main_loop(UpdateDrawFrame, 60, 1);

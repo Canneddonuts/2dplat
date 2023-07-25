@@ -2,8 +2,10 @@
 #include "raylib/raymath.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "Game.h"
+#include "Player.h"
 #include "Controls.h"
 
 #define MAX_NPCS 10
@@ -36,6 +38,7 @@ bool IsNpcsActive(npc_t npc[])
 
 void InitGame(void)
 {
+  memset(&player, 0, sizeof(player_t));
   InitPlayer(&player);
 
   camera.offset = (Vector2){ GetScreenWidth()/2.0f, GetScreenHeight()/2.0f };
@@ -80,14 +83,7 @@ void UpdateGame(void)
 
   UpdateGroundMovement(ground, GroundAmount);
 
-  if (!DebugPhysics)
-    UpdatePlayerPhysics(&player, ground, GroundAmount);
-  else
-    UpdateDebugPlayerMovement(&player, ground, GroundAmount);
-  UpdatePlayerSpritePos(&player);
-  UpdatePlayerDir(&player);
-  if (IsPlayerOffScreen(&player, 1000) || IsKeyPressed(KEY_R)) ResetPlayer(&player);
-  UpdatePlayerAnimation(&player);
+  UpdatePlayer(&player, ground, GroundAmount, DebugPhysics);
 
   for (int i = 0; i < MAX_NPCS; ++i) {
     if (CheckCollisionRecs(player.pos, npc[i].pos)) { npc[i].talkin = true; }
@@ -110,8 +106,8 @@ void DrawGame(void)
 
           ClearBackground(RAYWHITE);
 
-          if (DimedBackground) DrawTexture(bg, -20, -20, GRAY);
-          else DrawTexture(bg, -20, -20, RAYWHITE);
+          if (DimedBackground) DrawTexture(BackgroundSprite, -20, -20, GRAY);
+          else DrawTexture(BackgroundSprite, -20, -20, RAYWHITE);
 
           BeginMode2D(camera);
 
@@ -127,7 +123,7 @@ void DrawGame(void)
                             DrawRectangleRec(npc[i].pos, GREEN);
                           }
 
-                          DrawTexturePro(cat, player.sourceRec, player.destRec, player.origin, player.rotation, player.scolor);
+                          DrawPlayer(&player);
 
                           if (HitboxLines) {
                             DrawRectangleLinesEx(player.pos, 1, player.hbcolor);
@@ -174,6 +170,6 @@ void DestroyGame(void)
 {
   // Free all our allocated memory
   free(ground);
-  UnloadTexture(bg);
-  UnloadTexture(cat);
+  UnloadTexture(BackgroundSprite);
+  UnloadTexture(PlayerSprite);
 }
