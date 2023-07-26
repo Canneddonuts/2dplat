@@ -10,24 +10,13 @@
 #include "Controls.h"
 #include "Debug.h"
 #include "Ground.h"
+#include "Npc.h"
 
 Vector2 MouseVector = { 0 };
-
-#define MAX_NPCS 10
-static float textCounter = 0;
 
 static player_t player;
 static ground_t *ground;
 static npc_t npc[MAX_NPCS];
-
-bool IsNpcsActive(npc_t npc[])
-{
-  for (int i = 0; i < MAX_NPCS; ++i) {
-    if (npc[i].talkin) return true;
-  }
-
-  return false;
-}
 
 void InitGame(void)
 {
@@ -40,16 +29,8 @@ void InitGame(void)
   memset(&ground, 0, sizeof(ground_t) * GroundAmount);
   InitGround(&ground, GroundAmount);
 
-  npc[0] = (npc_t) { (Rectangle){ 200, 570, 20, 20 }, "My friend loves Nietzsche.", false };
-  npc[1] = (npc_t) { (Rectangle){ 300, 570, 20, 20 }, "God is dead and we killed him frfr ong.", false };
-  npc[2] = (npc_t) { (Rectangle){ 450, 500, 20, 20 }, "HiSegmentation fault (core dumped)", false };
-  npc[3] = (npc_t) { (Rectangle){ 560, 500, 20, 20 }, "I hate my thoughtless creator.", false };
-  npc[4] = (npc_t) { (Rectangle){ 650, 430, 20, 20 }, "Guess what?", false };
-  npc[5] = (npc_t) { (Rectangle){ 750, 430, 20, 20 }, "Chiken butt!", false };
-  npc[6] = (npc_t) { (Rectangle){ 820, 430, 20, 20 }, "God those two are insufferable!!", false };
-  npc[7] = (npc_t) { (Rectangle){ 900, 311, 40, 40 }, "I am bigger therefore superior.", false };
-  npc[8] = (npc_t) { (Rectangle){ 1000, 331, 20, 20 }, "The meaning of life is-wait one sec. Oh yeah 'If you can see this I f---ed up.'", false };
-  npc[9] = (npc_t) { (Rectangle){ 1060, 331, 20, 20 }, "Use 'IKJL' for camera movement ig.", false };
+  memset(npc, 0, sizeof(npc_t) * MAX_NPCS);
+  InitNpcs(npc);
 }
 
 void UpdateGame(void)
@@ -64,15 +45,7 @@ void UpdateGame(void)
 
   UpdatePlayer(&player, ground, GroundAmount, DebugPhysics);
 
-  for (int i = 0; i < MAX_NPCS; ++i) {
-    if (CheckCollisionRecs(player.pos, npc[i].pos)) { npc[i].talkin = true; }
-    else { npc[i].talkin = false; }
-  }
-
-  if (IsNpcsActive(npc)) {
-    if ((INPUT_TALK_DOWN)) textCounter += GetFrameTime() * 30;
-    else textCounter += GetFrameTime() * 10;
-  } else textCounter = 0;
+  UpdateNpcs(npc, &player);
 }
 
 void DrawGame(void)
@@ -93,9 +66,7 @@ void DrawGame(void)
 
                           DrawText("We ran out of blocks", ground[6].pos.x, ground[6].pos.y, 30, WHITE);
 
-                          for (int i = 0; i < MAX_NPCS; ++i) {
-                            DrawRectangleRec(npc[i].pos, GREEN);
-                          }
+                          DrawNpcs(npc);
 
                           DrawPlayer(&player);
 
@@ -105,14 +76,7 @@ void DrawGame(void)
           DrawFPS(0, 0);
           DrawDebugInfo(&player, GroundAmount, textCounter);
 
-          for (int i = 0; i < MAX_NPCS; ++i) {
-            if (npc[i].talkin) {
-              DrawRectangle(0, GetScreenHeight()-100, GetScreenWidth(), 100, Fade(BLACK, 0.3));
-
-              DrawText(TextSubtext(npc[i].msg, 0, textCounter), 10, GetScreenHeight() - 80, 30, WHITE);
-            }
-          }
-
+          DrawNpcTextBox(npc);
 
   EndDrawing();
 }
