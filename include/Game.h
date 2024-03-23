@@ -14,6 +14,7 @@ typedef struct Player
   int dir;
   int rotation;
   float friction;
+  float jumpBufferCounter;
   Vector2 origin;
   Vector2 velocity;
   Vector2 acceleration;

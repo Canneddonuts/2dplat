@@ -6,6 +6,8 @@
 #include "Macros.h"
 #include "Controls.h"
 
+#define PLAYER_JUMP_BUFFER 0.2f
+
 static int IsPlayerOffScreen(const player_t *player, float DeathPosY);
 static void ResetPlayer(player_t *player);
 static void UpdatePlayerSpritePos(player_t *player);
@@ -134,9 +136,15 @@ static void UpdatePlayerPhysics(player_t *player, ground_t *ground, int max)
     player->pos.y = (ground + TouchingGroundElement(player, ground, max))->pos.y - 29;
   }
 
-  if (player->canJump && (INPUT_JUMP_PRESSED)) {
+  if (INPUT_JUMP_PRESSED)
+      player->jumpBufferCounter = PLAYER_JUMP_BUFFER;
+  else
+      player->jumpBufferCounter -= GetFrameTime();
+
+  if (player->canJump && player->jumpBufferCounter > 0) {
       player->is_jumping = true;
       player->velocity.y += 430.0f;
+      player->jumpBufferCounter = 0;
   }
 
   player->velocity.y = max(-800, player->velocity.y);
