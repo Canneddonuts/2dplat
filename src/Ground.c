@@ -15,16 +15,16 @@ static void AddGroundBlock(ground_t **ground, size_t *n, int GroundType, Vector2
 static void DeleteGroundBlock(ground_t **ground, size_t *n);
 static void UpdateGroundMovement(ground_t *ground, size_t n);
 
-int TouchingGroundElement(player_t *player, ground_t *ground, int n)
+ground_t *TouchingGroundElement(player_t *player, ground_t *ground, int n)
 {
   for (int i = 0; i < n; ++i) {
-    if (CheckCollisionRecs(player->pos, (ground + i)->pos)) {
+    if (CheckCollisionRecs(player->pos, ground[i].pos)) {
         player->hbcolor = YELLOW;
-        return i;
+        return &ground[i];
     } else player->hbcolor = RED;
   }
 
-  return -1;
+  return NULL;
 }
 
 void InitGround(ground_t **ground, int n)

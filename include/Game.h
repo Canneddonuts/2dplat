@@ -43,6 +43,6 @@ void InitGame(void);
 void UpdateGame(void);
 void DrawGame(void);
 void DestroyGame(void);
-int  TouchingGroundElement(player_t *player, ground_t *ground, int n);
+ground_t *TouchingGroundElement(player_t *player, ground_t *ground, int n);
 
 #endif

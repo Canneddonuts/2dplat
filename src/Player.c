@@ -1,5 +1,7 @@
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
+#include <stdlib.h>
+#include <stdio.h>
 
 #include "Game.h"
 #include "Player.h"
@@ -15,6 +17,15 @@ static void UpdatePlayerDir(player_t *player);
 static void UpdatePlayerAnimation(player_t *player);
 static void UpdatePlayerPhysics(player_t *player, ground_t *ground, int max);
 static void UpdateDebugPlayerMovement(player_t *player, ground_t *ground, int max);
+static void PrintRectCol(const player_t *player, const ground_t *ground);
+
+static void PrintRectCol(const player_t *player, const ground_t *ground)
+{
+  if (ground != NULL)
+    printf("gx = %f, gy = %f, gw = %f, gh = %f\n", ground->pos.x, ground->pos.y, ground->pos.width, ground->pos.height);
+  else
+    puts("GROUND IS NULL!!!");
+}
 
 void InitPlayer(player_t *player)
 {
@@ -111,6 +122,16 @@ static void UpdatePlayerAnimation(player_t *player)
 
 static void UpdatePlayerPhysics(player_t *player, ground_t *ground, int max)
 {
+  static float oldPosX = 0;
+  static float oldPosY = 0;
+  static ground_t *touchingGround;
+
+  oldPosX = player->pos.x;
+  oldPosY = player->pos.y;
+
+  touchingGround = TouchingGroundElement(player, ground, max);
+  PrintRectCol(player, touchingGround);
+
   if ((INPUT_LEFT_DOWN))
       player->acceleration.x -= 2000;
 
@@ -119,21 +140,22 @@ static void UpdatePlayerPhysics(player_t *player, ground_t *ground, int max)
 
   player->acceleration.x += player->velocity.x * player->friction;
   player->velocity.x += player->acceleration.x * GetFrameTime();
+
   if (fabsf(player->velocity.x) < 1)
       player->velocity.x = 0;
 
-  if (TouchingGroundElement(player, ground, max) > -1) {
+  /*if (touchingGround != NULL) {
     player->canJump = true;
     player->is_jumping = false;
   } else {
     player->canJump = false;
-  }
+  }*/
 
-  if (TouchingGroundElement(player, ground, max) == -1) {
+  if (touchingGround == NULL) {
     player->velocity.y -= 1000.0f * GetFrameTime();
   } else if (player->canJump && !player->is_jumping) {
     player->velocity.y = 0;
-    player->pos.y = (ground + TouchingGroundElement(player, ground, max))->pos.y - 29;
+    player->pos.y = touchingGround->pos.y - 29;
   }
 
   if (INPUT_JUMP_PRESSED)
