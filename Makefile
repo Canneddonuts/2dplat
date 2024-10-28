@@ -383,16 +383,7 @@ endif
 # Define source code object files required
 #------------------------------------------------------------------------------------------------
 PROJECT_SOURCE_PATH = src
-
-PROJECT_SOURCE_FILES ?= \
-    $(PROJECT_SOURCE_PATH)/Main.c \
-    $(PROJECT_SOURCE_PATH)/Game.c \
-    $(PROJECT_SOURCE_PATH)/Player.c \
-		$(PROJECT_SOURCE_PATH)/Camera.c \
-		$(PROJECT_SOURCE_PATH)/Ground.c \
-		$(PROJECT_SOURCE_PATH)/Debug.c \
-		$(PROJECT_SOURCE_PATH)/Npc.c
-
+PROJECT_SOURCE_FILES = $(wildcard $(PROJECT_SOURCE_PATH)/*.c)
 # Define all object files from source files
 OBJS = $(patsubst %.c, %.o, $(PROJECT_SOURCE_FILES))
 
