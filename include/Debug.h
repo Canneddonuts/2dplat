@@ -3,7 +3,6 @@
 
 extern bool DebugInfo;
 extern bool CameraEnabled;
-extern bool DimedBackground;
 extern bool HitboxLines;
 extern bool DebugPhysics;
 

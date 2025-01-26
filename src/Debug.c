@@ -8,7 +8,6 @@
 
 bool DebugInfo = false;
 bool CameraEnabled = true;
-bool DimedBackground = false;
 bool HitboxLines = false;
 bool DebugPhysics = false;
 
@@ -22,9 +21,6 @@ void UpdateDebugToggles(void)
 
   if (IsKeyPressed(KEY_C))
       CameraEnabled = !CameraEnabled;
-
-  if (IsKeyPressed(KEY_G))
-      DimedBackground = !DimedBackground;
 
   if (IsKeyPressed(KEY_Q))
       DebugPhysics = !DebugPhysics;

@@ -54,10 +54,7 @@ void DrawGame(void)
 
           ClearBackground(RAYWHITE);
 
-          if (DimedBackground)
-              DrawTexture(BackgroundSprite, -20, -20, GRAY);
-          else
-              DrawTexture(BackgroundSprite, -20, -20, RAYWHITE);
+          DrawRectangleGradientV(0, 0, GetScreenWidth(), GetScreenHeight(), PURPLE, ORANGE);
 
           BeginMode2D(camera);
                           DrawText("Welcome to Macaroon's Misadventure", -220, 380, 30, Fade(RED,fabs(sin(GetTime()))));
@@ -85,6 +82,5 @@ void DestroyGame(void)
 {
   // Free all our allocated memory
   free(ground);
-  UnloadTexture(BackgroundSprite);
   UnloadTexture(PlayerSprite);
 }

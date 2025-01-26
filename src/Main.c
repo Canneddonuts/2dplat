@@ -2,7 +2,6 @@
 
 #include "Game.h"
 
-Texture2D BackgroundSprite;
 Texture2D PlayerSprite;
 Camera2D camera;
 
@@ -22,7 +21,6 @@ int main(void)
 
   InitWindow(640, 480, "Platformer Story");
 
-  BackgroundSprite = LoadTexture("assets/gfx/bg.png");
   PlayerSprite = LoadTexture("assets/gfx/cat.png");
 
   InitGame();

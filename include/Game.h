@@ -1,7 +1,6 @@
 #ifndef GAME_HEADER
 #define GAME_HEADER
 
-extern Texture2D BackgroundSprite;
 extern Texture2D PlayerSprite;
 extern Camera2D camera;
 extern Vector2 MouseVector;
